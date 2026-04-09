@@ -31,7 +31,7 @@ const QUICK_ACTIONS: QuickActionGroup[] = [
   {
     id: 'sales',
     title: 'Sales',
-    icon: '↗',
+    icon: '📈',
     items: [
       { label: 'Create Invoice',       route: 'CreateSalesInvoice' },
       { label: 'Create Quotation',      route: 'CreateQuotation' },
@@ -53,7 +53,7 @@ const QUICK_ACTIONS: QuickActionGroup[] = [
   {
     id: 'voucher',
     title: 'Voucher',
-    icon: '▣',
+    icon: '🪪',
     items: [
       { label: 'Payment',  route: 'CreateVoucher' },
       { label: 'Receipt',  route: 'CreateVoucher' },
@@ -64,7 +64,7 @@ const QUICK_ACTIONS: QuickActionGroup[] = [
   {
     id: 'inventory',
     title: 'Inventory',
-    icon: '◈',
+    icon: '📦',
     items: [
       { label: 'Stock Adjustment', route: 'StockAdjust' },
       { label: 'Stock Transfer',   route: 'StockTransfer' },
@@ -75,7 +75,7 @@ const QUICK_ACTIONS: QuickActionGroup[] = [
   {
     id: 'ledgers',
     title: 'Ledgers',
-    icon: '☰',
+    icon: '📒',
     items: [
       { label: 'Sundry Creditors', route: 'Ledger' as any },
       { label: 'Sundry Debtors',   route: 'Ledger' as any },
@@ -204,23 +204,26 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.activeBg,
   },
   iconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: Colors.pageBg,
+    borderWidth: 1,
+    borderColor: Colors.borderDefault,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
   },
   iconWrapActive: {
-    backgroundColor: Colors.cardBg,
+    backgroundColor: Colors.brandPrimary,
+    borderColor: Colors.brandPrimary,
   },
   groupIcon: {
     fontSize: 18,
     color: Colors.textSecondary,
   },
   groupIconActive: {
-    color: Colors.brandPrimary,
+    color: Colors.white,
   },
   groupTitle: {
     flex: 1,

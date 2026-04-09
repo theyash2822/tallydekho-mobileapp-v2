@@ -18,7 +18,7 @@ import type { RootStackParamList } from '../../types';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type Route = RouteProp<RootStackParamList, 'OTP'>;
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 4;
 
 export default function OTPScreen() {
   const navigation = useNavigation<Nav>();

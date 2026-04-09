@@ -52,6 +52,10 @@ import StockAddItemScreen from '../screens/stocks/StockAddItemScreen';
 import StockBulkTransferScreen from '../screens/stocks/StockBulkTransferScreen';
 import WarehouseDetailScreen from '../screens/stocks/WarehouseDetailScreen';
 
+// Integration screens
+import EWayBillIntegrationScreen from '../screens/settings/EWayBillIntegrationScreen';
+import EInvoiceIntegrationScreen from '../screens/settings/EInvoiceIntegrationScreen';
+
 // Report flows
 import FinancialScreen from '../screens/reports/FinancialScreen';
 import ComplianceScreen from '../screens/reports/ComplianceScreen';
@@ -121,6 +125,10 @@ export default function RootNavigator({ initialRoute }: { initialRoute: keyof Ro
       <Stack.Screen name="StockAddItem"      component={StockAddItemScreen} />
       <Stack.Screen name="StockBulkTransfer" component={StockBulkTransferScreen} />
       <Stack.Screen name="WarehouseDetail"   component={WarehouseDetailScreen} />
+
+      {/* Integrations */}
+      <Stack.Screen name="EWayBillIntegration" component={EWayBillIntegrationScreen} />
+      <Stack.Screen name="EInvoiceIntegration" component={EInvoiceIntegrationScreen} />
 
       {/* Report flows */}
       <Stack.Screen name="Financial"         component={FinancialScreen} />

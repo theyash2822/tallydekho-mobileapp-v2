@@ -55,10 +55,18 @@ export default function SettingsScreen() {
       id: 'integrations', title: 'Integrations', icon: '🔌',
       items: [
         { id: 'tally', label: 'Tally Prime', subtitle: 'Desktop sync', type: 'nav' },
+        { id: 'ewaybill', label: 'E-Way Bill', subtitle: 'ewaybillgst.gov.in · NIC GST API', type: 'nav' },
+        { id: 'einvoice', label: 'E-Invoicing (IRN)', subtitle: 'einvoice1.gst.gov.in · IRP 1-6', type: 'nav' },
         { id: 'bankfeeds', label: 'Bank Feeds', subtitle: 'Coming soon', type: 'info' },
       ],
     },
   ];
+
+  const handleNav = (id: string) => {
+    if (id === 'ewaybill') (navigation as any).navigate('EWayBillIntegration');
+    if (id === 'einvoice') (navigation as any).navigate('EInvoiceIntegration');
+    if (id === 'tally') navigation.navigate('SyncTally');
+  };
 
   const handleToggle = (id: string, value: boolean) => {
     if (id === 'biometric') setBiometric(value);
@@ -106,6 +114,7 @@ export default function SettingsScreen() {
                     style={s.item}
                     activeOpacity={item.type === 'nav' ? 0.7 : 1}
                     disabled={item.type !== 'nav'}
+                    onPress={() => item.type === 'nav' ? handleNav(item.id) : null}
                   >
                     <View style={s.itemLeft}>
                       <AppText style={s.itemLabel}>{item.label}</AppText>

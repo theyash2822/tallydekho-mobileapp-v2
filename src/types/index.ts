@@ -62,6 +62,10 @@ export type RootStackParamList = {
   StockAddItem: undefined;
   StockBulkTransfer: undefined;
   WarehouseDetail: { warehouseId: string };
+  // Integration screens
+  EWayBillIntegration: undefined;
+  EInvoiceIntegration: undefined;
+
   // Report flows
   Financial: undefined;
   Compliance: undefined;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { Colors, Typography } from '../../constants';
 export default function GSTFilingScreen() {
   return (
     <View style={styles.container}>
@@ -8,8 +8,7 @@ export default function GSTFilingScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F4EF' },
-  text: { fontSize: 16, color: '#1A1A1A' },
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.pageBg },
+  text: { fontSize: Typography.base, color: Colors.textPrimary },
 });

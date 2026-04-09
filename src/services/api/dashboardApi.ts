@@ -15,4 +15,8 @@ export const dashboardApi = {
 
   getRecentActivity: (companyGuid: string) =>
     apiClient.get('/recent-activity', { params: { companyGuid } }),
+
+  // Real-time compliance alerts — IRN pending, EWB pending/expired, GST unmatched
+  getAlerts: (companyGuid: string) =>
+    apiClient.get('/alerts', { params: { companyGuid } }),
 };

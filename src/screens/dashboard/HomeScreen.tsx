@@ -29,6 +29,8 @@ export default function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { company, selectedFY, setSelectedFY } = useAuthStore();
   const { data, status, error, period, setPeriod, setData, setLoading, setError } = useDashboardStore();
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alertCounts, setAlertCounts] = useState({ pendingIRN: 0, pendingEWB: 0, expiredEWB: 0, unmatchedGST: 0 });
   const [showFYPicker, setShowFYPicker] = useState(false);
 
   const fetchDashboard = useCallback(async () => {
@@ -46,12 +48,32 @@ export default function HomeScreen() {
     fetchDashboard();
   }, [fetchDashboard]);
 
+  // Fetch alerts separately
+  useEffect(() => {
+    if (!company?.guid) return;
+    dashboardApi.getAlerts(company.guid)
+      .then(r => {
+        const d = r.data?.data ?? {};
+        setAlerts(d.alerts ?? []);
+        setAlertCounts({
+          pendingIRN:  d.pendingIRNCount ?? 0,
+          pendingEWB:  d.pendingEWBCount ?? 0,
+          expiredEWB:  d.expiredEWBCount ?? 0,
+          unmatchedGST: d.unmatchedGSTCount ?? 0,
+        });
+      })
+      .catch(() => { /* non-fatal */ });
+  }, [company?.guid]);
+
   const formatAmount = (val: number) => {
     if (val >= 1_00_00_000) return `₹${(val / 1_00_00_000).toFixed(1)}Cr`;
     if (val >= 1_00_000) return `₹${(val / 1_00_000).toFixed(1)}L`;
     if (val >= 1_000) return `₹${(val / 1_000).toFixed(1)}K`;
     return `₹${val.toLocaleString('en-IN')}`;
   };
+
+  // Show IRN/EWB badge on notification icon
+  const totalAlerts = alertCounts.pendingIRN + alertCounts.pendingEWB + alertCounts.expiredEWB + alertCounts.unmatchedGST;
 
   const kpiChips = STATIC_KPI_CHIPS.map(chip => ({
     ...chip,
@@ -77,7 +99,14 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('Notifications')}
             style={styles.iconBtn}
           >
-            <AppText style={styles.icon}>🔔</AppText>
+            <View>
+              <AppText style={styles.icon}>🔔</AppText>
+              {totalAlerts > 0 && (
+                <View style={styles.alertBadge}>
+                  <AppText style={styles.alertBadgeText}>{totalAlerts > 9 ? '9+' : totalAlerts}</AppText>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Settings')}
@@ -199,6 +228,43 @@ export default function HomeScreen() {
           })}
         </View>
 
+        {/* ── Alerts Carousel ── */}
+        {alerts.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.alertsRow}
+          >
+            {alerts.map((alert: any) => (
+              <View
+                key={alert.id}
+                style={[
+                  styles.alertCard,
+                  { borderColor: alert.severity === 'error' ? Colors.negativeText : Colors.warningText,
+                    backgroundColor: alert.severity === 'error' ? Colors.negativeBg : Colors.warningBg }
+                ]}
+              >
+                <AppText style={[
+                  styles.alertMessage,
+                  { color: alert.severity === 'error' ? Colors.negativeText : Colors.warningText }
+                ]}>
+                  {alert.severity === 'error' ? '⚠️ ' : '⚠ '}{alert.message}
+                </AppText>
+                <TouchableOpacity
+                  style={styles.alertAction}
+                  onPress={() => {
+                    if (alert.type === 'irn') navigation.navigate('EInvoiceIntegration' as any);
+                    else if (alert.type === 'ewb') navigation.navigate('EWayBills');
+                    else if (alert.type === 'gst') navigation.navigate('GSTFiling');
+                  }}
+                >
+                  <AppText style={styles.alertActionText}>Fix now →</AppText>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        )}
+
         {/* ── Cash Flow ── */}
         <Card style={styles.cashFlowCard}>
           <AppText variant="h3" style={styles.sectionTitle}>Cash Flow</AppText>
@@ -275,6 +341,8 @@ const styles = StyleSheet.create({
   headerActions: { flexDirection: 'row', alignItems: 'center' },
   iconBtn: { padding: Spacing.xs, marginLeft: 4 },
   icon: { fontSize: 20 },
+  alertBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: Colors.negativeText, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 2 },
+  alertBadgeText: { fontSize: 9, color: Colors.white, fontWeight: '700' },
 
   // Search
   searchBar: {
@@ -397,4 +465,13 @@ const styles = StyleSheet.create({
   activityDesc: { flex: 1, fontSize: Typography.sm, color: Colors.textSecondary },
   activityTime: { fontSize: Typography.xs, color: Colors.textTertiary, marginLeft: Spacing.sm },
   emptyText: { fontSize: Typography.sm, color: Colors.textTertiary, fontStyle: 'italic', paddingVertical: Spacing.sm },
+  // Alerts
+  alertsRow: { paddingHorizontal: Spacing.base, paddingBottom: Spacing.base, gap: Spacing.sm },
+  alertCard: {
+    borderWidth: 1, borderRadius: Radius.md,
+    padding: Spacing.sm, minWidth: 240, maxWidth: 280,
+  },
+  alertMessage: { fontSize: Typography.sm, fontWeight: Typography.weightMedium, marginBottom: 6 },
+  alertAction: { alignSelf: 'flex-end' },
+  alertActionText: { fontSize: Typography.sm, fontWeight: Typography.weightBold, color: Colors.textPrimary },
 });

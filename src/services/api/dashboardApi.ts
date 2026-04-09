@@ -19,4 +19,8 @@ export const dashboardApi = {
   // Real-time compliance alerts — IRN pending, EWB pending/expired, GST unmatched
   getAlerts: (companyGuid: string) =>
     apiClient.get('/alerts', { params: { companyGuid } }),
+
+  // Reports dashboard — financial chart, GST %, audit count, AI weekly trend
+  getReportsDashboard: (companyGuid: string) =>
+    apiClient.get('/reports-dashboard', { params: { companyGuid } }),
 };

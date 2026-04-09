@@ -7,6 +7,7 @@ import apiClient from './client';
  */
 export const ewayBillApi = {
   // Save/update credentials
+  // Backend: POST /app/integrations/eway-bill/credentials
   saveCredentials: (body: {
     companyGuid: string;
     gstin: string;
@@ -19,6 +20,10 @@ export const ewayBillApi = {
   // Get connection status
   getStatus: (companyGuid: string) =>
     apiClient.get('/integrations/eway-bill/status', { params: { companyGuid } }),
+
+  // Get list of E-Way Bills
+  list: (companyGuid: string, params?: { fy?: string; status?: string }) =>
+    apiClient.get('/integrations/eway-bill/list', { params: { companyGuid, ...params } }),
 
   // Generate E-Way Bill for an invoice
   generate: (body: {

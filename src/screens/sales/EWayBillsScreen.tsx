@@ -8,6 +8,7 @@ import { AppText } from '../../components/common/Text';
 import { ErrorBanner } from '../../components/common/ErrorBanner';
 import { useAuthStore } from '../../store/authStore';
 import { salesApi } from '../../services/api/salesApi';
+import { ewayBillApi } from '../../services/api/integrationApi';
 import type { RootStackParamList } from '../../types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -54,7 +55,8 @@ export default function EWayBillsScreen() {
     if (!company?.guid) return;
     setLoading(true); setError(null);
     try {
-      const res = await salesApi.getEWayBills(company.guid, { fy: selectedFY, status: statusFilter === 'All' ? undefined : statusFilter });
+      // Use integration API for real EWB data from government portal
+      const res = await ewayBillApi.list(company.guid, { fy: selectedFY, status: statusFilter === 'All' ? undefined : statusFilter });
       setBills(res.data?.data ?? res.data ?? []);
     } catch (e: any) { setError(e?.message ?? 'Failed to load E-way Bills'); }
     finally { setLoading(false); }

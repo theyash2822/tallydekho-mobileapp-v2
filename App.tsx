@@ -1,45 +1,52 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { Text, TextInput } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useAuthStore } from './src/store/authStore';
+import RootNavigator from './src/navigation/RootNavigator';
+import type { RootStackParamList } from './src/types';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+// Disable system font scaling globally
+const TextAny = Text as any;
+const TextInputAny = TextInput as any;
+if (!TextAny.defaultProps) TextAny.defaultProps = {};
+TextAny.defaultProps.allowFontScaling = false;
+if (!TextInputAny.defaultProps) TextInputAny.defaultProps = {};
+TextInputAny.defaultProps.allowFontScaling = false;
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+export default function App() {
+  const { hydrate, isAuthenticated, isNewUser } = useAuthStore();
+  const [ready, setReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList>('Splash');
+
+  useEffect(() => {
+    const init = async () => {
+      await hydrate();
+      const store = useAuthStore.getState();
+      if (store.isAuthenticated && !store.isNewUser) {
+        setInitialRoute('MainTabs');
+      } else if (store.isAuthenticated && store.isNewUser) {
+        setInitialRoute('GetStarted');
+      } else {
+        setInitialRoute('Login');
+      }
+      setReady(true);
+    };
+    init();
+  }, []);
+
+  if (!ready) return null;
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <RootNavigator initialRoute={initialRoute} />
+        </NavigationContainer>
+        <Toast />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;

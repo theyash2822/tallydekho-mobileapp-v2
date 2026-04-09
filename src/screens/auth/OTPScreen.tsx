@@ -57,7 +57,9 @@ export default function OTPScreen() {
     setLoading(true);
     try {
       const res = await authApi.verifyOTP(mobile, code);
-      const { token, user, isNewUser } = res.data;
+      // Backend wraps response: { status, data: { token, user, isNewUser } }
+      const payload = res.data?.data ?? res.data;
+      const { token, user, isNewUser } = payload;
       await setAuth(token, user, isNewUser);
       if (isNewUser) {
         navigation.reset({ index: 0, routes: [{ name: 'GetStarted' }] });

@@ -84,6 +84,10 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        // Emulator only — x86_64. For device builds, remove this filter
+        ndk {
+            abiFilters "x86_64"
+        }
     }
     signingConfigs {
         debug {

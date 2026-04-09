@@ -1,9 +1,21 @@
 import axios from 'axios';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_BASE_URL, STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS } from '../../constants';
+
+// Android emulator → 10.0.2.2 to reach Mac localhost
+// iOS simulator → localhost
+// Physical device → Mac's actual IP
+const getBaseURL = () => {
+  if (__DEV__) {
+    if (Platform.OS === 'android') return 'http://10.0.2.2:3001/app';
+    return 'http://localhost:3001/app';
+  }
+  return 'https://api.tallydekho.com/app';
+};
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getBaseURL(),
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });

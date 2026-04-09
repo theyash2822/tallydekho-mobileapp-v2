@@ -25,8 +25,10 @@ export default function PairTallyScreen() {
     const fetchCode = async () => {
       try {
         const res = await apiClient.get('/pairing/code', { params: { companyGuid: company?.guid } });
-        setPairingCode(res.data?.code ?? '------');
-      } catch { setPairingCode('------'); }
+        // Pairing code is always 6 digits
+        const raw = String(res.data?.code ?? '');
+        setPairingCode(raw.length === 6 ? raw : '------');
+      } catch { setPairingCode('------'); /* 6-digit code */ }
       finally { setFetchingCode(false); }
     };
     fetchCode();
@@ -61,7 +63,10 @@ export default function PairTallyScreen() {
           {fetchingCode ? (
             <ActivityIndicator color={Colors.textPrimary} />
           ) : (
-            <AppText style={s.code}>{pairingCode}</AppText>
+            // Display as XXX-XXX format for readability
+          <AppText style={s.code}>
+            {pairingCode.length === 6 ? `${pairingCode.slice(0,3)}-${pairingCode.slice(3)}` : pairingCode}
+          </AppText>
           )}
           <AppText style={s.codeHint}>Enter this in the TallyDekho Desktop app</AppText>
         </View>

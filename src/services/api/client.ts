@@ -8,7 +8,9 @@ import { STORAGE_KEYS } from '../../constants';
 // Physical device → Mac's actual IP
 const getBaseURL = () => {
   if (__DEV__) {
-    if (Platform.OS === 'android') return 'http://10.0.2.2:3001/app';
+    // 10.0.2.2 = Android emulator reaches Mac
+    // 192.168.29.241 = physical Android phone on same WiFi
+    if (Platform.OS === 'android') return 'http://192.168.29.241:3001/app';
     return 'http://localhost:3001/app';
   }
   return 'https://api.tallydekho.com/app';
